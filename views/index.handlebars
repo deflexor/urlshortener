@@ -1,0 +1,79 @@
+
+
+<div class="uk-container uk-container-center uk-margin-top uk-margin-large-bottom">
+
+    <nav class="uk-navbar-container" uk-navbar>
+        <div class="uk-navbar-left">
+
+            <ul class="uk-navbar-nav">
+                <a href="" class="uk-navbar-item uk-logo">Acme URL shortenter</a>
+            </ul>
+
+        </div>
+    </nav>
+
+    <div class="uk-grid" data-uk-grid-margin="">
+
+        <div class="uk-width-medium-2-3 uk-row-first">
+            <div class="uk-card uk-card-body" id="ok_panel" style="display: none;">
+                <h3 class="uk-card-title">Copy your new short URL</h3>
+                <p></p>
+            </div>
+            <div class="uk-panel uk-panel-header" id="form_panel">
+
+                <h3 class="uk-panel-title">Post your URL here and get short link!</h3>
+
+                <form class="uk-form uk-form-stacked" id="url_form">
+
+                    <div class="uk-form-row">
+                        <label class="uk-form-label uk-text-large">Url</label>
+                        <div class="uk-form-controls">
+                            <input type="text" placeholder="http://my-site.tld" class="uk-input" name="url">
+                        </div>
+                    </div>
+
+                    <div class="uk-padding-small"></div>
+
+                    <div class="uk-form-row">
+                        <div class="uk-form-controls">
+                            <button class="uk-button uk-button-primary">Submit</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    document.getElementById('url_form').addEventListener('submit', function (evt) {
+        evt.preventDefault();
+        let sbtn = document.querySelector('button')
+        sbtn.setAttribute("disabled", "disabled")
+        const form = new FormData(document.getElementById('url_form'));
+        fetch('/', {
+            method: 'POST',
+            body: form
+        }).then(function (resp) {
+            sbtn.removeAttribute("disabled")
+            return resp.json()
+        }).then(function (resp) {
+            if (resp.error) {
+                UIkit.notification(resp.error, 'danger')
+            } else {
+                document.getElementById('form_panel').style.display = 'none'
+                document.getElementById('ok_panel').children[1].innerText = form.get('url') + ' -> ' + resp.ok
+                document.getElementById('ok_panel').style.display = 'block'
+            }
+        }).catch(function(error) {
+            UIkit.notification(error, 'danger');
+            console.error(error);
+        });
+    })
+
+</script>
